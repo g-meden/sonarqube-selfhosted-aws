@@ -35,6 +35,7 @@ jobs:
           sonar-scanner \
             -Dsonar.projectKey=terraform-iac \
             -Dsonar.sources=. \
+            -Dsonar.inclusions=terraform/** \
             -Dsonar.host.url=${{ secrets.SONAR_HOST_URL }} \
             -Dsonar.login=$SONAR_TOKEN \
             -X
