@@ -2,4 +2,5 @@
 terraform/*.tfstate
 terraform/*.tfstate.backup
 terraform/.terraform/
-
+# Optional: ignore lock file (only if you don’t want to track it)
+terraform/.terraform.lock.hcl
