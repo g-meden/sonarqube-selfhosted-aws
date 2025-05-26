@@ -17,14 +17,16 @@ resource "aws_security_group" "sonarqube_sg" {
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]  # Restrict in real setup
+    cidr_blocks = [var.allwed_ip]
+   # cidr_blocks = ["0.0.0.0/0"]  # Restrict in real setup
   }
 
   ingress {
     from_port   = 9000
     to_port     = 9000
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = [var.allowed_ip]
+  # cidr_blocks = ["0.0.0.0/0"]
   }
 
   egress {
