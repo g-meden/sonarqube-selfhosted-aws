@@ -39,7 +39,6 @@ resource "aws_security_group" "sonarqube_sg" {
 
 resource "aws_instance" "sonarqube" {
   ami           = "ami-0c55b159cbfafe1f0"  # Ubuntu 22.04 in us-east-2
-  instance_type = "t3.medium"
   instance_type = "t3.medium"             # Enough RAM for SonarQube
   key_name      = aws_key_pair.sonarqube_key.key_name
   security_groups = [aws_security_group.sonarqube_sg.name]
