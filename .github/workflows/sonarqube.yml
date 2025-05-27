@@ -1,4 +1,4 @@
-name: SonarQube Scan
+name: Terraform & SonarQube Scan
 
 on:
   push:
@@ -7,21 +7,42 @@ on:
     branches: [main]
 
 jobs:
-  sonarqube:
-    name: Run SonarQube Scanner CLI
+  terraform:
+    name: Terraform Plan & Apply
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Set up Java
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v2
+
+      - name: Terraform Init
+        run: terraform -chdir=terraform init
+
+      - name: Terraform Plan
+        run: terraform -chdir=terraform plan -var="allowed_ip=${{ secrets.ALLOWED_IP }}"
+
+      - name: Terraform Apply
+        run: terraform -chdir=terraform apply -auto-approve -var="allowed_ip=${{ secrets.ALLOWED_IP }}"
+
+  sonarqube:
+    name: Run SonarQube Scan
+    needs: terraform
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Java
         uses: actions/setup-java@v3
         with:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: Download SonarQube Scanner CLI
+      - name: Download SonarQube Scanner
         run: |
           curl -sSLo sonar-scanner.zip https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-5.0.1.3006-linux.zip
           unzip sonar-scanner.zip
@@ -33,9 +54,8 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
           sonar-scanner \
-            -Dsonar.projectKey=terraform-iac \
+            -Dsonar.projectKey=your-project-key \
             -Dsonar.sources=. \
-            -Dsonar.inclusions=terraform/** \
             -Dsonar.host.url=${{ secrets.SONAR_HOST_URL }} \
             -Dsonar.login=$SONAR_TOKEN \
             -X
